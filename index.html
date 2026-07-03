@@ -3,180 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>환불 금액 계산기</title>
+<title>스터디카페 환불 계산기</title>
 <style>
   :root{
-    --paper:#FAFAF8;
-    --ink:#1C2333;
-    --ink-soft:#5B6478;
-    --line:#E4E6EC;
+    --bg:#F4F3EF;
     --card:#FFFFFF;
-    --hl:#FFE24D;
-    --hl-soft:#FFF7CC;
-    --navy:#233459;
+    --ink:#20242E;
+    --muted:#6E7480;
+    --line:#E6E4DD;
+    --gold:#C0862C;
+    --gold-soft:#FBF3E2;
+    --dot:#E8A33D;
+    --dark:#232936;
     --danger:#C0392B;
     --danger-soft:#FBEDEB;
-    --radius:14px;
+    --field-ro:#EFEEEA;
+    --radius:20px;
+    --radius-s:12px;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{-webkit-text-size-adjust:100%;}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic","맑은 고딕",sans-serif;
-    background:var(--paper);
+    background:var(--bg);
     color:var(--ink);
-    line-height:1.55;
-    padding:0 0 64px;
+    line-height:1.6;
+    padding:0 0 72px;
   }
-  .wrap{max-width:560px;margin:0 auto;padding:0 18px;}
+  .wrap{max-width:660px;margin:0 auto;padding:0 20px;}
 
-  header{padding:34px 0 22px;}
+  header{padding:44px 0 28px;}
   .eyebrow{
-    display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;
-    color:var(--navy);background:var(--hl);padding:4px 10px;border-radius:4px;margin-bottom:12px;
+    font-size:13px;font-weight:800;letter-spacing:.22em;color:var(--gold);margin-bottom:10px;
   }
-  h1{font-size:26px;font-weight:800;letter-spacing:-.02em;}
-  header p{color:var(--ink-soft);font-size:14px;margin-top:6px;}
+  h1{font-size:30px;font-weight:800;letter-spacing:-.02em;}
+  header p{color:var(--muted);font-size:15px;margin-top:10px;}
+  header p b{color:var(--gold);font-weight:700;}
 
-  .step{
+  .card{
     background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:20px 18px;margin-bottom:14px;
+    padding:26px 26px;margin-bottom:20px;
+    box-shadow:0 1px 2px rgba(32,36,46,.03);
   }
-  .step-label{
-    display:flex;align-items:center;gap:8px;
-    font-size:14px;font-weight:700;
-  }
-  .step-num{
-    width:22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;
-    font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none;
-  }
-  .item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-  .btn-remove{
-    border:1.5px solid var(--line);background:#fff;color:var(--danger);
-    border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
-  }
-  .btn-remove:hover{border-color:var(--danger);}
+  @media (max-width:480px){.card{padding:22px 18px;}}
 
-  .pills{display:flex;flex-wrap:wrap;gap:8px;}
-  .pill{
-    border:1.5px solid var(--line);background:#fff;border-radius:999px;
-    padding:9px 16px;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer;
-    transition:border-color .15s,background .15s;
-    font-family:inherit;
+  .sec-title{
+    display:flex;align-items:center;gap:9px;font-size:17px;font-weight:800;margin-bottom:18px;
   }
-  .pill:hover{border-color:var(--navy);}
-  .pill.on{background:var(--navy);border-color:var(--navy);color:#fff;}
-  .pill:focus-visible{outline:3px solid var(--hl);outline-offset:2px;}
+  .sec-title::before{
+    content:"";width:9px;height:9px;border-radius:50%;background:var(--dot);flex:none;
+  }
 
-  select,input[type=number],input[type=date]{
+  .f-label{display:block;font-size:14px;font-weight:700;color:var(--ink);margin-bottom:8px;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end;}
+  @media (max-width:480px){.grid2{grid-template-columns:1fr;}}
+  .field{margin-top:16px;}
+  .field.first{margin-top:0;}
+  .grid2 .field{margin-top:16px;}
+
+  select,input[type=number],input[type=date],input[type=text]{
     width:100%;font-family:inherit;font-size:16px;font-weight:600;color:var(--ink);
-    border:1.5px solid var(--line);border-radius:10px;padding:12px 14px;background:#fff;
-    appearance:none;-webkit-appearance:none;min-height:48px;
+    border:1.5px solid var(--line);border-radius:var(--radius-s);padding:13px 15px;background:#fff;
+    appearance:none;-webkit-appearance:none;min-height:50px;
   }
   select{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235B6478' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E7480' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 15px center;padding-right:40px;
   }
-  select:focus,input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px var(--hl-soft);}
-  .field{margin-top:12px;}
-  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink-soft);margin-bottom:6px;}
-  .hint{font-size:12px;color:var(--ink-soft);margin-top:6px;}
+  select:focus,input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft);}
+  input[readonly]{background:var(--field-ro);border-color:var(--field-ro);color:var(--ink);}
+  .hint{font-size:13px;color:var(--muted);margin-top:10px;}
+  .hint b{color:var(--gold);font-weight:700;}
 
-  /* 합산 영역 */
-  .combine-box{margin-top:16px;padding-top:16px;border-top:1px dashed var(--line);}
+  /* 구분 버튼 */
+  .cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+  @media (max-width:480px){.cat-grid{grid-template-columns:repeat(2,1fr);}}
+  .cat-btn{
+    border:1.5px solid var(--line);background:#fff;border-radius:var(--radius-s);
+    padding:14px 6px;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;
+    font-family:inherit;transition:background .15s,border-color .15s,color .15s;
+    white-space:nowrap;
+  }
+  .cat-btn:hover{border-color:var(--dark);}
+  .cat-btn.on{background:var(--dark);border-color:var(--dark);color:#fff;}
+  .cat-btn:focus-visible{outline:3px solid var(--gold-soft);outline-offset:2px;}
+
+  /* 합산 토글 */
+  .combine-box{margin-top:18px;padding-top:18px;border-top:1px dashed var(--line);}
   .toggle-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-  .toggle-row .t-label{font-size:14px;font-weight:700;}
-  .toggle-row .t-sub{font-size:12px;color:var(--ink-soft);margin-top:2px;}
-  .switch{position:relative;width:52px;height:30px;flex:none;}
+  .toggle-row .t-label{font-size:15px;font-weight:800;}
+  .toggle-row .t-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+  .switch{position:relative;width:54px;height:31px;flex:none;}
   .switch input{opacity:0;width:0;height:0;}
   .slider{
     position:absolute;inset:0;background:var(--line);border-radius:999px;cursor:pointer;
     transition:background .15s;
   }
   .slider::before{
-    content:"";position:absolute;width:24px;height:24px;left:3px;top:3px;
+    content:"";position:absolute;width:25px;height:25px;left:3px;top:3px;
     background:#fff;border-radius:50%;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.2);
   }
-  .switch input:checked + .slider{background:var(--navy);}
-  .switch input:checked + .slider::before{transform:translateX(22px);}
-  .switch input:focus-visible + .slider{outline:3px solid var(--hl);outline-offset:2px;}
+  .switch input:checked + .slider{background:var(--dark);}
+  .switch input:checked + .slider::before{transform:translateX(23px);}
+  .switch input:focus-visible + .slider{outline:3px solid var(--gold-soft);outline-offset:2px;}
 
-  .extra-list{margin-top:4px;}
-  .extra-row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+  .extra-row{display:flex;gap:10px;align-items:center;margin-top:10px;}
   .extra-row select{flex:1;}
   .btn-del{
-    flex:none;width:44px;height:48px;border:1.5px solid var(--line);border-radius:10px;
+    flex:none;width:46px;height:50px;border:1.5px solid var(--line);border-radius:var(--radius-s);
     background:#fff;color:var(--danger);font-size:18px;font-weight:700;cursor:pointer;font-family:inherit;
   }
   .btn-del:hover{border-color:var(--danger);}
   .btn-add-inline{
-    margin-top:10px;width:100%;padding:11px;border:1.5px dashed var(--navy);border-radius:10px;
-    background:#fff;color:var(--navy);font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;
+    margin-top:12px;width:100%;padding:12px;border:1.5px dashed var(--gold);border-radius:var(--radius-s);
+    background:#fff;color:var(--gold);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;
   }
-  .btn-add-inline:hover{background:var(--hl-soft);}
+  .btn-add-inline:hover{background:var(--gold-soft);}
 
-  .btn-add-item{
-    width:100%;padding:14px;border:1.5px dashed var(--navy);border-radius:var(--radius);
-    background:#fff;color:var(--navy);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
-    margin-bottom:14px;
-  }
-  .btn-add-item:hover{background:var(--hl-soft);}
-
-  .week-chip{
-    display:none;margin-top:12px;background:var(--hl-soft);border:1px solid #F0DE8E;
-    border-radius:10px;padding:10px 14px;font-size:14px;font-weight:600;line-height:1.7;
-  }
-  .week-chip.show{display:block;}
-  .week-chip .big{font-weight:800;color:var(--navy);}
-  .week-chip.warn{background:var(--danger-soft);border-color:#E8B4AE;color:var(--danger);}
-  .week-chip.warn .big{color:var(--danger);}
-
+  /* 스터디룸 안내 */
   .room-note{
-    display:none;margin-top:12px;background:var(--hl-soft);border:1px solid #F0DE8E;
-    border-radius:10px;padding:12px 14px;font-size:13.5px;
+    display:none;margin-top:16px;background:var(--gold-soft);border:1px solid #EBD9AE;
+    border-radius:var(--radius-s);padding:15px 17px;font-size:14.5px;
   }
   .room-note.show{display:block;}
 
+  /* 사물함 함께 환불 */
+  .check-row{display:flex;align-items:flex-start;gap:13px;cursor:pointer;}
+  .checkbox{
+    width:24px;height:24px;border:1.5px solid var(--line);border-radius:7px;background:#fff;
+    flex:none;margin-top:2px;display:flex;align-items:center;justify-content:center;
+    transition:background .15s,border-color .15s;
+  }
+  .check-row input{position:absolute;opacity:0;width:0;height:0;}
+  .check-row input:checked ~ .checkbox{background:var(--dark);border-color:var(--dark);}
+  .check-row input:checked ~ .checkbox::after{
+    content:"";width:6px;height:11px;border:solid #fff;border-width:0 2.5px 2.5px 0;
+    transform:rotate(45deg);margin-top:-3px;
+  }
+  .check-row input:focus-visible ~ .checkbox{outline:3px solid var(--gold-soft);outline-offset:2px;}
+  .check-row .c-label{font-size:16px;font-weight:800;}
+  .check-row .c-sub{font-size:13.5px;color:var(--muted);margin-top:2px;}
+  #lockerArea{margin-top:20px;padding-top:20px;border-top:1px dashed var(--line);display:none;}
+  #lockerArea.show{display:block;}
+
+  /* 계산 버튼 */
+  .btn-calc{
+    width:100%;padding:19px;border:none;border-radius:var(--radius);
+    background:var(--dark);color:#fff;font-size:18px;font-weight:800;cursor:pointer;
+    font-family:inherit;margin-bottom:20px;letter-spacing:-.01em;
+    box-shadow:0 2px 8px rgba(32,36,46,.18);
+    transition:transform .1s,box-shadow .15s;
+  }
+  .btn-calc:hover{box-shadow:0 4px 14px rgba(32,36,46,.25);}
+  .btn-calc:active{transform:scale(.99);}
+  .btn-calc:focus-visible{outline:3px solid var(--gold);outline-offset:3px;}
+
+  /* 결과 */
   .result{
-    border-radius:var(--radius);padding:22px 18px;margin-top:6px;
-    background:var(--navy);color:#fff;display:none;
+    border-radius:var(--radius);padding:26px;margin-bottom:20px;
+    background:var(--dark);color:#fff;display:none;
   }
   .result.show{display:block;}
   .result.deny{background:var(--danger-soft);color:var(--danger);border:1.5px solid var(--danger);}
-  .result .r-title{font-size:13px;font-weight:600;opacity:.85;margin-bottom:4px;}
-  .result .r-amount{font-size:34px;font-weight:800;letter-spacing:-.02em;}
-  .result .r-amount .won{font-size:20px;font-weight:700;margin-left:2px;}
-  .result .r-rows{margin-top:14px;border-top:1px solid rgba(255,255,255,.25);padding-top:12px;font-size:13.5px;}
-  .result.deny .r-rows{border-top-color:rgba(192,57,43,.25);}
-  .result .r-row{display:flex;justify-content:space-between;padding:3px 0;gap:12px;}
-  .result .r-row span:first-child{opacity:.8;flex:none;}
-  .result .r-row span:last-child{text-align:right;}
+  .badge-hl{
+    display:inline-block;background:var(--gold);color:#fff;
+    font-size:12.5px;font-weight:800;border-radius:5px;padding:3px 10px;margin-bottom:12px;letter-spacing:.04em;
+  }
+  .result .r-title{font-size:14px;font-weight:600;opacity:.85;margin-bottom:4px;}
+  .result .r-amount{font-size:38px;font-weight:800;letter-spacing:-.02em;}
+  .result .r-amount .won{font-size:22px;font-weight:700;margin-left:2px;}
   .result .r-item-head{
-    margin-top:12px;padding:6px 10px;border-radius:6px;background:rgba(255,255,255,.12);
-    font-size:13px;font-weight:700;display:flex;justify-content:space-between;gap:12px;
+    margin-top:16px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.12);
+    font-size:14px;font-weight:800;display:flex;justify-content:space-between;gap:12px;
   }
   .result.deny .r-item-head{background:rgba(192,57,43,.1);}
-  .result .r-note{margin-top:12px;font-size:12.5px;opacity:.75;line-height:1.6;}
-  .badge-hl{
-    display:inline-block;background:var(--hl);color:var(--navy);
-    font-size:12px;font-weight:700;border-radius:4px;padding:2px 8px;margin-bottom:10px;
-  }
+  .result .r-rows{margin-top:8px;font-size:14px;}
+  .result .r-row{display:flex;justify-content:space-between;padding:3px 2px;gap:12px;}
+  .result .r-row span:first-child{opacity:.75;flex:none;}
+  .result .r-row span:last-child{text-align:right;font-weight:600;}
+  .result .r-note{margin-top:14px;font-size:13px;opacity:.75;line-height:1.65;}
+  .result .r-deny-msg{font-size:18px;font-weight:800;}
 
+  /* 규정 안내 */
   details.policy{
-    margin-top:26px;border:1px solid var(--line);border-radius:var(--radius);background:#fff;
+    border:1px solid var(--line);border-radius:var(--radius);background:#fff;margin-bottom:20px;
   }
   details.policy summary{
-    cursor:pointer;padding:15px 18px;font-size:14px;font-weight:700;list-style:none;
+    cursor:pointer;padding:20px 26px;font-size:17px;font-weight:800;list-style:none;
     display:flex;justify-content:space-between;align-items:center;
   }
   details.policy summary::-webkit-details-marker{display:none;}
-  details.policy summary::after{content:"＋";color:var(--ink-soft);font-weight:400;}
+  details.policy summary::after{content:"＋";color:var(--muted);font-weight:400;font-size:20px;}
   details.policy[open] summary::after{content:"－";}
-  .policy-body{padding:0 18px 18px;font-size:13px;color:var(--ink-soft);}
-  .policy-body h3{font-size:13px;color:var(--ink);margin:12px 0 4px;}
-  .policy-body ul{padding-left:18px;}
-  .policy-body li{margin:2px 0;}
+  .policy-body{padding:0 26px 24px;font-size:13.5px;color:var(--muted);}
+  .policy-body h3{font-size:15px;color:var(--ink);margin:16px 0 6px;font-weight:800;}
+  .policy-body h3:first-child{margin-top:0;}
+  .policy-line{font-size:14px;color:var(--muted);}
+  .policy-line b{color:var(--ink);}
+  .policy-table{
+    width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  }
+  .policy-table th{
+    background:#F4F3EF;color:var(--ink);font-weight:800;padding:11px 6px;
+    border-bottom:1px solid var(--line);text-align:center;
+  }
+  .policy-table td{
+    padding:11px 6px;text-align:center;color:var(--ink);font-weight:600;
+    border-bottom:1px solid var(--line);
+  }
+  .policy-table tbody tr:last-child td{border-bottom:none;}
+  .policy-table td:first-child{font-weight:800;}
+  .policy-table td:last-child{color:var(--danger);}
+  @media (max-width:480px){.policy-table th,.policy-table td{padding:9px 3px;font-size:13px;}}
+  .policy-foot{margin-top:12px;font-size:13px;color:var(--muted);line-height:1.65;}
 
-  footer{margin-top:28px;text-align:center;font-size:12px;color:var(--ink-soft);}
+  footer{text-align:center;font-size:13px;color:var(--muted);}
   .hidden{display:none !important;}
   @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
@@ -184,102 +226,190 @@
 <body>
 <div class="wrap">
   <header>
-    <span class="eyebrow">REFUND CALCULATOR</span>
-    <h1>환불 금액 계산기</h1>
-    <p>상품별로 입력하면 환불 금액이 자동 계산되고, 여러 상품을 함께 환불할 경우 합산 금액이 표시됩니다.</p>
+    <div class="eyebrow">REFUND CALCULATOR</div>
+    <h1>스터디카페 환불 계산기</h1>
+    <p>구매일자와 환불 요청일자를 입력하면 사용 주차를 자동으로 계산하여 환불 규정에 따른 금액을 조회합니다.</p>
   </header>
 
-  <!-- 환불 요청일 (공통) -->
-  <section class="step">
-    <div class="step-label" style="margin-bottom:14px;"><span class="step-num">1</span>환불 요청일자</div>
-    <div class="field" style="margin-top:0;">
+  <!-- 환불 요청일자 -->
+  <section class="card">
+    <div class="sec-title">환불 요청일자</div>
+    <div class="field first">
       <input type="date" id="refundDate">
-      <p class="hint">모든 상품에 공통으로 적용됩니다. 기본값은 오늘 날짜입니다.</p>
+    </div>
+    <p class="hint">사용 주차는 <b>구매일자 ~ 환불 요청일자</b> 경과 일수로 계산됩니다. (7일 = 1주차)</p>
+  </section>
+
+  <!-- 환불 상품 선택 -->
+  <section class="card">
+    <div class="sec-title">환불 상품 선택</div>
+
+    <div class="field first">
+      <span class="f-label">구분</span>
+      <div class="cat-grid" id="catGrid" role="group" aria-label="구분 선택">
+        <button class="cat-btn" type="button" data-cat="time">충전권(시간권)</button>
+        <button class="cat-btn" type="button" data-cat="period">기간권</button>
+        <button class="cat-btn" type="button" data-cat="locker">사물함</button>
+        <button class="cat-btn" type="button" data-cat="room">스터디룸</button>
+      </div>
+    </div>
+
+    <div class="room-note" id="roomNote">
+      스터디룸은 <b>환불이 불가</b>합니다. 예약 일정 변경만 가능하오니, 이용 고객님께 일정 변경으로 안내해 주세요.
+    </div>
+
+    <div id="mainFields" class="hidden">
+      <div class="field">
+        <span class="f-label">이용권 선택</span>
+        <select id="mainProd"></select>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <span class="f-label">결제금액 (원)</span>
+          <input type="text" id="mainPrice" readonly value="">
+        </div>
+        <div class="field">
+          <span class="f-label" id="mainBuyLabel">구매일자</span>
+          <input type="date" id="mainBuy">
+        </div>
+      </div>
+      <div class="field hidden" id="remainField">
+        <span class="f-label">잔여시간 (시간)</span>
+        <input type="number" id="remainHours" inputmode="numeric" min="0" step="1" placeholder="예: 62">
+        <p class="hint" id="timeHint"></p>
+      </div>
+
+      <!-- 기간 합산 (기간권/사물함) -->
+      <div class="combine-box hidden" id="mainCombineBox">
+        <div class="toggle-row">
+          <div>
+            <div class="t-label">기간 합산 (연장권 포함)</div>
+            <div class="t-sub">연장권 등으로 이용 기간이 이어져 있는 경우 켜 주세요.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="mainCombine">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="hidden" id="mainCombineArea">
+          <div id="mainExtraList"></div>
+          <button class="btn-add-inline" id="mainAddPass" type="button">＋ 합산할 이용권 추가</button>
+          <p class="hint">먼저 구매한 이용권부터 순서대로 추가해 주세요.</p>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- 상품 카드 목록 -->
-  <div id="itemsContainer"></div>
+  <!-- 사물함 함께 환불 -->
+  <section class="card hidden" id="lockerCard">
+    <label class="check-row">
+      <input type="checkbox" id="lockerCheck">
+      <span class="checkbox"></span>
+      <span>
+        <span class="c-label">사물함 함께 환불</span>
+        <span class="c-sub" style="display:block;">충전권 + 사물함, 기간권 + 사물함처럼 상품을 이중으로 보유한 경우 체크하세요.</span>
+      </span>
+    </label>
+    <div id="lockerArea">
+      <div class="grid2" style="align-items:start;">
+        <div class="field" style="margin-top:0;">
+          <span class="f-label">사물함 이용권</span>
+          <select id="lockerProd"></select>
+        </div>
+        <div class="field" style="margin-top:0;">
+          <span class="f-label">사물함 구매일자 (이용 시작일)</span>
+          <input type="date" id="lockerBuy">
+        </div>
+      </div>
+      <div class="combine-box">
+        <div class="toggle-row">
+          <div>
+            <div class="t-label">사물함 기간 합산</div>
+            <div class="t-sub">사물함을 연장해 기간이 이어져 있는 경우 켜 주세요.</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="lockerCombine">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="hidden" id="lockerCombineArea">
+          <div id="lockerExtraList"></div>
+          <button class="btn-add-inline" id="lockerAddPass" type="button">＋ 합산할 사물함 이용권 추가</button>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <button class="btn-add-item" id="btnAddItem" type="button">＋ 함께 환불할 상품 추가 (충전권·기간권·사물함)</button>
+  <button class="btn-calc" id="btnCalc" type="button">환불 금액 계산하기</button>
 
   <!-- 결과 -->
   <div class="result" id="resultBox" aria-live="polite"></div>
 
   <!-- 규정 안내 -->
   <details class="policy">
-    <summary>환불 규정 전체 보기</summary>
+    <summary>환불 규정 안내</summary>
     <div class="policy-body">
       <h3>충전권(시간권)</h3>
-      <ul>
-        <li>사용 시간당 1,500원씩 차감 후 차액 환급</li>
-        <li>구매 4주(28일) 후에는 환불 불가</li>
-      </ul>
+      <p class="policy-line">사용시간 × 시간당 1,500원 차감 후 차액 환급 · <b>구매 4주 후에는 환불 불가</b></p>
       <h3>스터디룸</h3>
-      <ul><li>환불 불가 · 예약 일정 변경만 가능</li></ul>
-      <h3>기간권 2주</h3>
-      <ul><li>1주차 40% · 2주차부터 환불 불가</li></ul>
-      <h3>기간권 4주</h3>
-      <ul><li>1주차 70% · 2주차 40% · 3주차 20% · 4주차부터 환불 불가</li></ul>
-      <h3>기간권 8주</h3>
-      <ul><li>~2주차 70% · ~4주차 40% · ~6주차 20% · 7주차부터 환불 불가</li></ul>
-      <h3>기간권 12주</h3>
-      <ul><li>~3주차 70% · ~6주차 40% · ~9주차 20% · 10주차부터 환불 불가</li></ul>
-      <h3>기간권 20주</h3>
-      <ul><li>~5주차 70% · ~10주차 40% · ~16주차 20% · 17주차부터 환불 불가</li></ul>
-      <h3>사물함</h3>
-      <ul><li>기간권 환불 규정과 동일하게 적용</li></ul>
-      <h3>기간 합산 시 (연장권 포함)</h3>
-      <ul>
-        <li>이용권은 구매(연장) 순서대로 사용한 것으로 봅니다.</li>
-        <li>이미 기간이 지난 이용권 : 환불 불가</li>
-        <li>현재 사용 중인 이용권 : 해당 이용권 기준 사용 주차의 환불율 적용</li>
-        <li>아직 시작하지 않은 이용권 : 전액 환불</li>
-      </ul>
-      <h3>여러 상품 동시 환불 시</h3>
-      <ul><li>상품별(충전권·기간권·사물함) 규정에 따라 각각 계산한 뒤 합산합니다.</li></ul>
+      <p class="policy-line">환불 불가 · 예약일정 변경만 가능</p>
+      <h3>기간권 · 사물함 (사물함 규정 동일)</h3>
+      <table class="policy-table">
+        <thead>
+          <tr><th>상품</th><th>70% 환불</th><th>40% 환불</th><th>20% 환불</th><th>환불 불가</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>2주권</td><td>-</td><td>1주차</td><td>-</td><td>2주차~</td></tr>
+          <tr><td>4주권</td><td>1주차</td><td>2주차</td><td>3주차</td><td>4주차~</td></tr>
+          <tr><td>8주권</td><td>~2주차</td><td>~4주차</td><td>~6주차</td><td>7주차~</td></tr>
+          <tr><td>12주권</td><td>~3주차</td><td>~6주차</td><td>~9주차</td><td>10주차~</td></tr>
+          <tr><td>20주권</td><td>~5주차</td><td>~10주차</td><td>~16주차</td><td>17주차~</td></tr>
+        </tbody>
+      </table>
+      <p class="policy-foot">※ 기간 합산(연장 구매) 시 : 현재 사용 중인 이용권은 해당 주차 환불율을 적용하고, 아직 시작하지 않은 이용권은 전액 환불 대상으로 계산됩니다. 여러 상품을 함께 환불할 경우 상품별 규정에 따라 각각 계산한 뒤 합산합니다.</p>
     </div>
   </details>
 
-  <footer>본 계산기는 환불 규정에 따른 참고용이며, 최종 환불 금액은 결제 수단·프로모션 적용 여부에 따라 달라질 수 있습니다.</footer>
+  <footer>본 계산기는 안내용이며, 최종 환불 금액은 매장 규정 확인 후 확정됩니다.</footer>
 </div>
 
 <script>
 // ───────── 데이터 ─────────
 const PRODUCTS = {
   time: [
-    {id:"t100", name:"100시간권 (95,000원)",  price:95000,  hours:100},
-    {id:"t200", name:"200시간권 (180,000원)", price:180000, hours:200},
-    {id:"t300", name:"300시간권 (265,000원)", price:265000, hours:300},
+    {id:"t100", name:"100시간권 · 95,000원",  price:95000,  hours:100},
+    {id:"t200", name:"200시간권 · 180,000원", price:180000, hours:200},
+    {id:"t300", name:"300시간권 · 265,000원", price:265000, hours:300},
   ],
   period: [
-    {id:"p2",   name:"2주권 (65,000원)",            price:65000,  weeks:2},
-    {id:"p4",   name:"4주권 (109,000원)",           price:109000, weeks:4},
-    {id:"p8",   name:"8주권 (210,000원)",           price:210000, weeks:8},
-    {id:"p12",  name:"12주권 (300,000원)",          price:300000, weeks:12},
-    {id:"p20",  name:"20주권 (490,000원)",          price:490000, weeks:20},
-    {id:"p4e",  name:"4주권 연장 (99,000원)",       price:99000,  weeks:4},
-    {id:"p8e",  name:"8주권 연장 (200,000원)",      price:200000, weeks:8},
-    {id:"p12e", name:"12주권 연장 (290,000원)",     price:290000, weeks:12},
-    {id:"p20e", name:"20주권 연장 (480,000원)",     price:480000, weeks:20},
-    {id:"g4",   name:"고정석 4주권 (179,000원)",    price:179000, weeks:4},
-    {id:"g8",   name:"고정석 8주권 (350,000원)",    price:350000, weeks:8},
-    {id:"g12",  name:"고정석 12주권 (480,000원)",   price:480000, weeks:12},
-    {id:"g4e",  name:"고정석 4주권 연장 (169,000원)",  price:169000, weeks:4},
-    {id:"g8e",  name:"고정석 8주권 연장 (340,000원)",  price:340000, weeks:8},
-    {id:"g12e", name:"고정석 12주권 연장 (470,000원)", price:470000, weeks:12},
-    {id:"j4",   name:"지정석 4주권 (159,000원)",    price:159000, weeks:4},
-    {id:"j8",   name:"지정석 8주권 (300,000원)",    price:300000, weeks:8},
-    {id:"j12",  name:"지정석 12주권 (430,000원)",   price:430000, weeks:12},
+    {id:"p2",   name:"2주권 · 65,000원",            price:65000,  weeks:2,  group:"자유석"},
+    {id:"p4",   name:"4주권 · 109,000원",           price:109000, weeks:4,  group:"자유석"},
+    {id:"p8",   name:"8주권 · 210,000원",           price:210000, weeks:8,  group:"자유석"},
+    {id:"p12",  name:"12주권 · 300,000원",          price:300000, weeks:12, group:"자유석"},
+    {id:"p20",  name:"20주권 · 490,000원",          price:490000, weeks:20, group:"자유석"},
+    {id:"p4e",  name:"4주권 연장 · 99,000원",       price:99000,  weeks:4,  group:"자유석"},
+    {id:"p8e",  name:"8주권 연장 · 200,000원",      price:200000, weeks:8,  group:"자유석"},
+    {id:"p12e", name:"12주권 연장 · 290,000원",     price:290000, weeks:12, group:"자유석"},
+    {id:"p20e", name:"20주권 연장 · 480,000원",     price:480000, weeks:20, group:"자유석"},
+    {id:"j4",   name:"지정석 4주권 · 159,000원",    price:159000, weeks:4,  group:"지정석"},
+    {id:"j8",   name:"지정석 8주권 · 300,000원",    price:300000, weeks:8,  group:"지정석"},
+    {id:"j12",  name:"지정석 12주권 · 430,000원",   price:430000, weeks:12, group:"지정석"},
+    {id:"g4",   name:"고정석 4주권 · 179,000원",    price:179000, weeks:4,  group:"고정석"},
+    {id:"g8",   name:"고정석 8주권 · 350,000원",    price:350000, weeks:8,  group:"고정석"},
+    {id:"g12",  name:"고정석 12주권 · 480,000원",   price:480000, weeks:12, group:"고정석"},
+    {id:"g4e",  name:"고정석 4주권 연장 · 169,000원",  price:169000, weeks:4,  group:"고정석"},
+    {id:"g8e",  name:"고정석 8주권 연장 · 340,000원",  price:340000, weeks:8,  group:"고정석"},
+    {id:"g12e", name:"고정석 12주권 연장 · 470,000원", price:470000, weeks:12, group:"고정석"},
   ],
   locker: [
-    {id:"l2", name:"사물함 2주 (6,000원)",  price:6000,  weeks:2},
-    {id:"l4", name:"사물함 4주 (11,000원)", price:11000, weeks:4},
+    {id:"l2",  name:"사물함 2주 · 6,000원",   price:6000,  weeks:2},
+    {id:"l4",  name:"사물함 4주 · 11,000원",  price:11000, weeks:4},
+    {id:"l8",  name:"사물함 8주 · 20,000원",  price:20000, weeks:8},
+    {id:"l12", name:"사물함 12주 · 30,000원", price:30000, weeks:12},
   ],
 };
-const CAT_LABEL = {time:"충전권", period:"기간권", locker:"사물함", room:"스터디룸"};
+const CAT_LABEL = {time:"충전권", period:"기간권", locker:"사물함"};
 
-// 주차별 환불율 (이용권 총 기간별)
 const RATE_TABLE = {
   2:  w => (w <= 1 ? 0.4 : null),
   4:  w => (w <= 1 ? 0.7 : w <= 2 ? 0.4 : w <= 3 ? 0.2 : null),
@@ -290,15 +420,42 @@ const RATE_TABLE = {
 const HOURLY = 1500;
 const TIME_LIMIT_DAYS = 28;
 const fmt = n => n.toLocaleString("ko-KR");
-const shortName = p => p.name.replace(/ \(.*\)/, "");
+const shortName = p => p.name.split(" · ")[0];
 const fmtDate = d => d.getFullYear() + "년 " + (d.getMonth()+1) + "월 " + d.getDate() + "일";
 
-// ───────── 요소 / 상태 ─────────
-const refundDate = document.getElementById("refundDate");
-const itemsContainer = document.getElementById("itemsContainer");
-const btnAddItem = document.getElementById("btnAddItem");
-const resultBox = document.getElementById("resultBox");
-let itemSeq = 0;
+// 그룹(자유석/지정석/고정석)이 있는 카테고리는 optgroup으로 구분해 표시
+function buildOptions(catKey, placeholder){
+  const list = PRODUCTS[catKey];
+  let html = `<option value="">${placeholder}</option>`;
+  if (list.some(p => p.group)) {
+    const groups = [];
+    list.forEach(p => { if (!groups.includes(p.group)) groups.push(p.group); });
+    groups.forEach(g => {
+      html += `<optgroup label="${g}">` +
+        list.filter(p => p.group === g).map(p => `<option value="${p.id}">${p.name}</option>`).join("") +
+        `</optgroup>`;
+    });
+  } else {
+    html += list.map(p => `<option value="${p.id}">${p.name}</option>`).join("");
+  }
+  return html;
+}
+
+// ───────── 요소 ─────────
+const $ = id => document.getElementById(id);
+const refundDate = $("refundDate");
+const catGrid = $("catGrid"), roomNote = $("roomNote"), mainFields = $("mainFields");
+const mainProd = $("mainProd"), mainPrice = $("mainPrice"), mainBuy = $("mainBuy"), mainBuyLabel = $("mainBuyLabel");
+const remainField = $("remainField"), remainHours = $("remainHours"), timeHint = $("timeHint");
+const mainCombineBox = $("mainCombineBox"), mainCombine = $("mainCombine"), mainCombineArea = $("mainCombineArea");
+const mainExtraList = $("mainExtraList"), mainAddPass = $("mainAddPass");
+const lockerCard = $("lockerCard"), lockerCheck = $("lockerCheck"), lockerArea = $("lockerArea");
+const lockerProd = $("lockerProd"), lockerBuy = $("lockerBuy");
+const lockerCombine = $("lockerCombine"), lockerCombineArea = $("lockerCombineArea");
+const lockerExtraList = $("lockerExtraList"), lockerAddPass = $("lockerAddPass");
+const btnCalc = $("btnCalc"), resultBox = $("resultBox");
+
+let cat = null;
 
 // 오늘 날짜 기본값
 (function(){
@@ -306,365 +463,251 @@ let itemSeq = 0;
   refundDate.value = t.getFullYear() + "-" + String(t.getMonth()+1).padStart(2,"0") + "-" + String(t.getDate()).padStart(2,"0");
 })();
 
-refundDate.addEventListener("change", calcAll);
-btnAddItem.addEventListener("click", () => { addItem(); calcAll(); });
+// 사물함 select 채우기
+lockerProd.innerHTML = buildOptions("locker", "— 사물함 이용권 선택 —");
 
-// ───────── 상품 카드 생성 ─────────
-function addItem(){
-  itemSeq++;
-  const card = document.createElement("section");
-  card.className = "step item-card";
-  card.dataset.cat = "";
-  card.innerHTML = `
-    <div class="item-head">
-      <div class="step-label"><span class="step-num"></span><span class="item-title">상품</span></div>
-      <button class="btn-remove" type="button">✕ 삭제</button>
-    </div>
-    <div class="field" style="margin-top:0;">
-      <label>구분</label>
-      <div class="pills cat-pills">
-        <button class="pill" type="button" data-cat="time">충전권(시간권)</button>
-        <button class="pill" type="button" data-cat="period">기간권</button>
-        <button class="pill" type="button" data-cat="locker">사물함</button>
-        <button class="pill" type="button" data-cat="room">스터디룸</button>
-      </div>
-    </div>
-    <div class="room-note">스터디룸은 <b>환불 불가</b>이며 예약 일정 변경만 가능합니다. 이 상품은 합산 금액에 0원으로 표시됩니다.</div>
-    <div class="field prod-field hidden">
-      <label>이용권 선택</label>
-      <select class="prod-sel"></select>
-    </div>
-    <div class="combine-box hidden">
-      <div class="toggle-row">
-        <div>
-          <div class="t-label">기간 합산 (연장권 포함)</div>
-          <div class="t-sub">연장권 등으로 이용 기간이 이어져 있는 경우 켜 주세요.</div>
-        </div>
-        <label class="switch">
-          <input type="checkbox" class="combine-toggle">
-          <span class="slider"></span>
-        </label>
-      </div>
-      <div class="combine-area hidden">
-        <div class="extra-list"></div>
-        <button class="btn-add-inline btn-add-pass" type="button">＋ 합산할 이용권 추가</button>
-        <p class="hint">위에서 선택한 이용권이 끝난 뒤 이어서 사용하는 순서대로 추가해 주세요.</p>
-      </div>
-    </div>
-    <div class="field buy-field hidden">
-      <label class="buy-label">구매일자 (이용 시작일)</label>
-      <input type="date" class="buy-date">
-    </div>
-    <div class="field time-field hidden">
-      <label>잔여 시간 (시간)</label>
-      <input type="number" class="remain-hours" inputmode="numeric" min="0" step="0.5" placeholder="예: 62">
-      <p class="hint">잔여 시간을 입력하면 사용 시간이 자동 계산되고, 사용 시간당 1,500원이 차감됩니다.</p>
-    </div>
-    <div class="week-chip"></div>
-  `;
-  itemsContainer.appendChild(card);
+// ───────── 구분 선택 ─────────
+catGrid.querySelectorAll(".cat-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    catGrid.querySelectorAll(".cat-btn").forEach(b => b.classList.remove("on"));
+    btn.classList.add("on");
+    cat = btn.dataset.cat;
+    resultBox.className = "result";
+    roomNote.classList.toggle("show", cat === "room");
+    mainCombine.checked = false;
+    mainCombineArea.classList.add("hidden");
+    mainExtraList.innerHTML = "";
+    mainProd.value = "";
+    mainPrice.value = "";
 
-  const q = sel => card.querySelector(sel);
-
-  // 구분 선택
-  card.querySelectorAll(".cat-pills .pill").forEach(btn => {
-    btn.addEventListener("click", () => {
-      card.querySelectorAll(".cat-pills .pill").forEach(b => b.classList.remove("on"));
-      btn.classList.add("on");
-      const cat = btn.dataset.cat;
-      card.dataset.cat = cat;
-      q(".room-note").classList.toggle("show", cat === "room");
-      q(".week-chip").className = "week-chip";
-      q(".combine-toggle").checked = false;
-      q(".combine-area").classList.add("hidden");
-      q(".extra-list").innerHTML = "";
-
-      if (cat === "room") {
-        q(".prod-field").classList.add("hidden");
-        q(".combine-box").classList.add("hidden");
-        q(".buy-field").classList.add("hidden");
-        q(".time-field").classList.add("hidden");
-        calcAll();
-        return;
-      }
-      q(".prod-sel").innerHTML = '<option value="">— 이용권을 선택하세요 —</option>' +
-        PRODUCTS[cat].map(p => `<option value="${p.id}">${p.name}</option>`).join("");
-      q(".prod-field").classList.remove("hidden");
-      q(".combine-box").classList.toggle("hidden", cat === "time");
-      q(".buy-field").classList.add("hidden");
-      q(".time-field").classList.add("hidden");
-      calcAll();
-    });
-  });
-
-  // 상품 선택
-  q(".prod-sel").addEventListener("change", () => {
-    const cat = card.dataset.cat;
-    const p = PRODUCTS[cat].find(x => x.id === q(".prod-sel").value);
-    q(".week-chip").className = "week-chip";
-    if (!p) {
-      q(".buy-field").classList.add("hidden");
-      q(".time-field").classList.add("hidden");
-      calcAll();
+    if (cat === "room") {
+      mainFields.classList.add("hidden");
+      lockerCard.classList.add("hidden");
       return;
     }
-    q(".buy-label").textContent = (cat === "time") ? "구매일자" : "구매일자 (이용 시작일)";
-    q(".buy-field").classList.remove("hidden");
-    q(".time-field").classList.toggle("hidden", cat !== "time");
-    if (cat === "time") q(".remain-hours").max = p.hours;
-    calcAll();
+    mainProd.innerHTML = buildOptions(cat, "— 이용권을 선택하세요 —");
+    mainFields.classList.remove("hidden");
+    mainBuyLabel.textContent = (cat === "time") ? "구매일자" : "구매일자 (이용 시작일)";
+    remainField.classList.toggle("hidden", cat !== "time");
+    mainCombineBox.classList.toggle("hidden", cat === "time");
+    // 사물함 함께 환불: 충전권/기간권일 때만 노출
+    lockerCard.classList.toggle("hidden", cat === "locker");
   });
+});
 
-  // 합산 토글
-  q(".combine-toggle").addEventListener("change", () => {
-    const on = q(".combine-toggle").checked;
-    q(".combine-area").classList.toggle("hidden", !on);
-    if (on && q(".extra-list").children.length === 0) addExtraRow(card);
-    calcAll();
+// ───────── 상품 선택 ─────────
+mainProd.addEventListener("change", () => {
+  const p = PRODUCTS[cat] && PRODUCTS[cat].find(x => x.id === mainProd.value);
+  mainPrice.value = p ? fmt(p.price) : "";
+  if (cat === "time" && p) {
+    remainHours.max = p.hours;
+    timeHint.innerHTML = `총 <b>${p.hours}시간</b> 상품 · 사용시간 × 1,500원 차감 · <b>구매 4주 후 환불 불가</b>`;
+  }
+});
+
+// ───────── 합산 UI ─────────
+function bindCombine(toggle, area, list, addBtn, catKey){
+  toggle.addEventListener("change", () => {
+    area.classList.toggle("hidden", !toggle.checked);
+    if (toggle.checked && list.children.length === 0) addExtraRow(list, catKey);
   });
-  q(".btn-add-pass").addEventListener("click", () => { addExtraRow(card); calcAll(); });
-
-  // 입력
-  q(".buy-date").addEventListener("change", calcAll);
-  q(".remain-hours").addEventListener("input", calcAll);
-
-  // 삭제
-  q(".btn-remove").addEventListener("click", () => {
-    card.remove();
-    renumber();
-    calcAll();
-  });
-
-  renumber();
-  return card;
+  addBtn.addEventListener("click", () => addExtraRow(list, catKey));
 }
-
-function addExtraRow(card){
-  const cat = card.dataset.cat;
+function addExtraRow(list, catKey){
+  const key = typeof catKey === "function" ? catKey() : catKey;
   const row = document.createElement("div");
   row.className = "extra-row";
   const sel = document.createElement("select");
-  sel.innerHTML = '<option value="">— 합산할 이용권 선택 —</option>' +
-    PRODUCTS[cat].map(p => `<option value="${p.id}">${p.name}</option>`).join("");
-  sel.addEventListener("change", calcAll);
+  sel.innerHTML = buildOptions(key, "— 합산할 이용권 선택 —");
   const del = document.createElement("button");
-  del.type = "button";
-  del.className = "btn-del";
-  del.textContent = "✕";
+  del.type = "button"; del.className = "btn-del"; del.textContent = "✕";
   del.setAttribute("aria-label","이 이용권 삭제");
-  del.addEventListener("click", () => { row.remove(); calcAll(); });
-  row.appendChild(sel);
-  row.appendChild(del);
-  card.querySelector(".extra-list").appendChild(row);
+  del.addEventListener("click", () => row.remove());
+  row.appendChild(sel); row.appendChild(del);
+  list.appendChild(row);
 }
+bindCombine(mainCombine, mainCombineArea, mainExtraList, mainAddPass, () => cat);
+bindCombine(lockerCombine, lockerCombineArea, lockerExtraList, lockerAddPass, "locker");
 
-function renumber(){
-  const cards = itemsContainer.querySelectorAll(".item-card");
-  cards.forEach((c, i) => {
-    c.querySelector(".step-num").textContent = i + 2; // 1번은 환불 요청일
-    c.querySelector(".item-title").textContent = "상품 " + (i + 1);
-    c.querySelector(".btn-remove").classList.toggle("hidden", cards.length === 1);
-  });
-}
+lockerCheck.addEventListener("change", () => {
+  lockerArea.classList.toggle("show", lockerCheck.checked);
+});
 
 // ───────── 계산 ─────────
-function refundInfoDate(){
-  if (!refundDate.value) return null;
-  return new Date(refundDate.value + "T00:00:00");
+function getExtras(list, key){
+  const out = [];
+  list.querySelectorAll("select").forEach(sel => {
+    const p = PRODUCTS[key].find(x => x.id === sel.value);
+    if (p) out.push(p);
+  });
+  return out;
 }
 
-// 카드 1개 계산 → {status:"incomplete"|"room"|"deny"|"ok", refund, head, rows[], chipHTML, chipWarn}
-function calcItem(card, rDate){
-  const cat = card.dataset.cat;
-  const q = sel => card.querySelector(sel);
-  if (!cat) return {status:"incomplete"};
-
-  if (cat === "room") {
-    return {status:"room", refund:0, head:["스터디룸", "환불 불가 (0원)"],
-      rows:[["안내","예약 일정 변경만 가능"]]};
-  }
-
-  const p = PRODUCTS[cat].find(x => x.id === q(".prod-sel").value);
-  if (!p) return {status:"incomplete"};
-  if (!q(".buy-date").value || !rDate) return {status:"incomplete"};
-
-  const b = new Date(q(".buy-date").value + "T00:00:00");
+// 기간권/사물함 계산
+function calcPeriodLike(catKey, main, extras, buyVal, rDate){
+  const b = new Date(buyVal + "T00:00:00");
   const days = Math.round((rDate - b) / 86400000);
-  if (isNaN(days)) return {status:"incomplete"};
-  if (days < 0) {
-    return {status:"deny", refund:0,
-      head:[shortName(p) + " (" + CAT_LABEL[cat] + ")", "날짜 오류"],
-      rows:[["안내","환불 요청일이 구매일보다 빠릅니다. 날짜를 확인해 주세요."]],
-      chipHTML:"환불 요청일자가 구매일자보다 빠릅니다.", chipWarn:true};
-  }
+  if (isNaN(days)) return {status:"error", msg:"날짜를 확인해 주세요."};
+  if (days < 0) return {status:"error", msg:"환불 요청일자가 구매일자보다 빠릅니다."};
 
-  // ── 충전권 ──
-  if (cat === "time") {
-    const within = days <= TIME_LIMIT_DAYS;
-    const chip = `구매 후 경과 <span class="big">${fmt(days)}일</span> · ` +
-      (within ? "환불 가능 기간(4주 이내)입니다" : "구매 4주(28일)가 경과했습니다");
-    if (!within) {
-      return {status:"deny", refund:0,
-        head:[shortName(p) + " (충전권)", "환불 불가 (0원)"],
-        rows:[["결제 금액", fmt(p.price)+"원"],["구매 후 경과", fmt(days)+"일 · 4주 초과"]],
-        chipHTML:chip, chipWarn:true};
-    }
-    if (q(".remain-hours").value === "") return {status:"incomplete", chipHTML:chip};
-    const remain = Number(q(".remain-hours").value);
-    if (isNaN(remain) || remain < 0) return {status:"incomplete", chipHTML:chip};
-    if (remain > p.hours) {
-      return {status:"deny", refund:0,
-        head:[shortName(p) + " (충전권)", "입력 오류"],
-        rows:[["안내",`잔여 시간이 총 ${p.hours}시간을 초과할 수 없습니다.`]],
-        chipHTML:chip};
-    }
-    const used = p.hours - remain;
-    const deduct = used * HOURLY;
-    const refund = Math.max(0, p.price - deduct);
-    return {status:"ok", refund,
-      head:[shortName(p) + " (충전권)", fmt(refund) + "원"],
-      rows:[
-        ["결제 금액", fmt(p.price)+"원"],
-        ["사용 시간", fmt(used)+"시간 · 차감 −"+fmt(deduct)+"원"],
-      ],
-      chipHTML:chip};
-  }
-
-  // ── 기간권 / 사물함 ──
-  const passes = [p];
-  if (q(".combine-toggle").checked) {
-    q(".extra-list").querySelectorAll("select").forEach(sel => {
-      const ep = PRODUCTS[cat].find(x => x.id === sel.value);
-      if (ep) passes.push(ep);
-    });
-  }
-  const totalWeeks = passes.reduce((s, x) => s + x.weeks, 0);
-  const totalPrice = passes.reduce((s, x) => s + x.price, 0);
-  const week = Math.floor(days / 7) + 1;
+  const passes = [main, ...extras];
+  const totalWeeks = passes.reduce((s,x)=>s+x.weeks,0);
+  const totalPrice = passes.reduce((s,x)=>s+x.price,0);
+  const week = Math.floor(days/7)+1;
   const endDate = new Date(b);
-  endDate.setDate(endDate.getDate() + totalWeeks * 7 - 1);
+  endDate.setDate(endDate.getDate() + totalWeeks*7 - 1);
   const isCombined = passes.length > 1;
-  const overPeriod = week > totalWeeks;
   const nameAll = passes.map(shortName).join(" + ");
+  const catName = CAT_LABEL[catKey];
 
-  const chip =
-    (overPeriod
-      ? `이용 기간(총 ${totalWeeks}주)이 이미 종료되었습니다 · 경과 ${fmt(days)}일`
-      : `현재 <span class="big">사용 ${week}주차</span> / 총 ${totalWeeks}주 (시작 후 ${fmt(days)}일 경과)`) +
-    `<br>이용 종료일 : <span class="big">${fmtDate(endDate)}</span>` +
-    (isCombined ? ` (${passes.length}개 이용권 합산)` : "");
+  const baseRows = [
+    ["결제금액", fmt(totalPrice)+"원"],
+    ["사용 주차", week+"주차"+(isCombined?" / 총 "+totalWeeks+"주":" ("+fmt(days)+"일 경과)")],
+    ["이용 종료일", fmtDate(endDate)],
+  ];
 
-  if (overPeriod) {
-    return {status:"deny", refund:0,
-      head:[nameAll + " (" + CAT_LABEL[cat] + ")", "환불 불가 (0원)"],
-      rows:[["총 결제 금액", fmt(totalPrice)+"원"],["이용 종료일", fmtDate(endDate)+" · 기간 만료"]],
-      chipHTML:chip, chipWarn:true};
+  if (week > totalWeeks) {
+    return {status:"deny", refund:0, head:[nameAll+" ("+catName+")","환불 불가 · 0원"],
+      rows: baseRows.concat([["사유","이용 기간 만료 ("+fmt(days)+"일 경과)"]])};
   }
 
   if (!isCombined) {
-    const rate = RATE_TABLE[p.weeks](week);
+    const rate = RATE_TABLE[main.weeks](week);
     if (rate === null) {
-      return {status:"deny", refund:0,
-        head:[shortName(p) + " (" + CAT_LABEL[cat] + ")", "환불 불가 (0원)"],
-        rows:[
-          ["결제 금액", fmt(p.price)+"원"],
-          ["사용 주차", week+"주차 · 환불 불가 구간"],
-          ["이용 종료일", fmtDate(endDate)],
-        ],
-        chipHTML:chip, chipWarn:true};
+      return {status:"deny", refund:0, head:[nameAll+" ("+catName+")","환불 불가 · 0원"],
+        rows: baseRows.concat([["사유", week+"주차는 환불 불가 구간"]])};
     }
-    const refund = Math.round(p.price * rate);
-    return {status:"ok", refund,
-      head:[shortName(p) + " (" + CAT_LABEL[cat] + ")", fmt(refund) + "원"],
-      rows:[
-        ["결제 금액", fmt(p.price)+"원"],
-        ["사용 주차", week+"주차 · "+Math.round(rate*100)+"% 환불"],
-        ["이용 종료일", fmtDate(endDate)],
-      ],
-      chipHTML:chip};
+    const refund = Math.round(main.price*rate);
+    return {status:"ok", refund, head:[nameAll+" ("+catName+")", fmt(refund)+"원"],
+      rows: baseRows.concat([["환불 비율","결제금액의 "+Math.round(rate*100)+"%"]])};
   }
 
-  // 합산 (순차 사용 가정)
+  // 합산: 순차 사용
   let cum = 0, refund = 0, any = false;
-  const rows = [["총 결제 금액", fmt(totalPrice)+"원"],
-                ["사용 주차", week+"주차 / 총 "+totalWeeks+"주"],
-                ["이용 종료일", fmtDate(endDate)]];
-  passes.forEach((x, i) => {
-    const startW = cum + 1, endW = cum + x.weeks;
-    const label = (i+1) + ") " + shortName(x);
-    if (week > endW) {
-      rows.push([label, "기간 만료 · 0원"]);
-    } else if (week >= startW) {
+  const rows = baseRows.slice();
+  passes.forEach((x,i) => {
+    const startW = cum+1, endW = cum+x.weeks;
+    const label = (i+1)+") "+shortName(x);
+    if (week > endW) rows.push([label,"기간 만료 · 0원"]);
+    else if (week >= startW) {
       const wIn = week - cum;
       const rate = RATE_TABLE[x.weeks](wIn);
-      if (rate === null) rows.push([label, `사용 ${wIn}주차 · 환불 불가 0원`]);
+      if (rate === null) rows.push([label,`사용 ${wIn}주차 · 환불 불가 0원`]);
       else { const r = Math.round(x.price*rate); refund += r; any = true;
-             rows.push([label, `사용 ${wIn}주차 · ${Math.round(rate*100)}% = ${fmt(r)}원`]); }
-    } else {
-      refund += x.price; any = true;
-      rows.push([label, "미사용 · 전액 "+fmt(x.price)+"원"]);
-    }
+             rows.push([label,`사용 ${wIn}주차 · ${Math.round(rate*100)}% = ${fmt(r)}원`]); }
+    } else { refund += x.price; any = true; rows.push([label,"미사용 · 전액 "+fmt(x.price)+"원"]); }
     cum = endW;
   });
-  return {status: any ? "ok" : "deny", refund,
-    head:[nameAll + " (" + CAT_LABEL[cat] + " 합산)", fmt(refund) + "원"],
-    rows, chipHTML:chip, chipWarn:!any};
+  return {status: any?"ok":"deny", refund,
+    head:[nameAll+" ("+catName+" 합산)", any?fmt(refund)+"원":"환불 불가 · 0원"], rows};
 }
 
-function calcAll(){
-  const rDate = refundInfoDate();
-  const cards = [...itemsContainer.querySelectorAll(".item-card")];
+// 충전권 계산
+function calcTime(main, buyVal, remainVal, rDate){
+  const b = new Date(buyVal + "T00:00:00");
+  const days = Math.round((rDate - b) / 86400000);
+  if (isNaN(days)) return {status:"error", msg:"날짜를 확인해 주세요."};
+  if (days < 0) return {status:"error", msg:"환불 요청일자가 구매일자보다 빠릅니다."};
+
+  if (days > TIME_LIMIT_DAYS) {
+    return {status:"deny", refund:0, head:[shortName(main)+" (충전권)","환불 불가 · 0원"],
+      rows:[["결제금액", fmt(main.price)+"원"],["구매 후 경과", fmt(days)+"일"],["사유","구매 4주(28일) 경과"]]};
+  }
+  const remain = Math.floor(Number(remainVal));
+  if (remainVal === "" || isNaN(remain) || remain < 0) return {status:"error", msg:"잔여시간을 입력해 주세요."};
+  if (remain > main.hours) return {status:"error", msg:`잔여시간이 총 ${main.hours}시간을 초과할 수 없습니다.`};
+
+  const used = main.hours - remain;
+  const deduct = used * HOURLY;
+  const refund = Math.max(0, main.price - deduct);
+  return {status:"ok", refund, head:[shortName(main)+" (충전권)", fmt(refund)+"원"],
+    rows:[
+      ["결제금액", fmt(main.price)+"원"],
+      ["구매 후 경과", fmt(days)+"일 (4주 이내)"],
+      ["사용 시간", fmt(used)+"시간"],
+      ["차감 금액", "− "+fmt(deduct)+"원 (시간당 1,500원)"],
+    ]};
+}
+
+btnCalc.addEventListener("click", () => {
+  resultBox.className = "result";
+  if (!refundDate.value) return showError("환불 요청일자를 입력해 주세요.");
+  const rDate = new Date(refundDate.value + "T00:00:00");
+  if (!cat) return showError("구분(충전권·기간권·사물함·스터디룸)을 선택해 주세요.");
+
+  if (cat === "room") {
+    resultBox.className = "result show deny";
+    resultBox.innerHTML = `<div class="r-title">환불 불가</div>
+      <div class="r-deny-msg">스터디룸은 환불이 불가합니다.</div>
+      <div class="r-rows"><div class="r-row"><span>안내</span><span>예약 일정 변경만 가능</span></div></div>`;
+    return;
+  }
+
   const results = [];
 
-  cards.forEach(card => {
-    const r = calcItem(card, rDate);
-    const chip = card.querySelector(".week-chip");
-    if (r.chipHTML) {
-      chip.className = "week-chip show" + (r.chipWarn ? " warn" : "");
-      chip.innerHTML = r.chipHTML;
-    } else {
-      chip.className = "week-chip";
-    }
-    results.push(r);
-  });
+  // 메인 상품
+  const mp = PRODUCTS[cat].find(x => x.id === mainProd.value);
+  if (!mp) return showError("이용권을 선택해 주세요.");
+  if (!mainBuy.value) return showError("구매일자를 입력해 주세요.");
 
-  const done = results.filter(r => r.status !== "incomplete");
-  if (done.length === 0) { resultBox.className = "result"; return; }
+  let r1;
+  if (cat === "time") {
+    r1 = calcTime(mp, mainBuy.value, remainHours.value, rDate);
+  } else {
+    const extras = mainCombine.checked ? getExtras(mainExtraList, cat) : [];
+    r1 = calcPeriodLike(cat, mp, extras, mainBuy.value, rDate);
+  }
+  if (r1.status === "error") return showError(r1.msg);
+  results.push(r1);
 
-  const total = done.reduce((s, r) => s + (r.refund || 0), 0);
-  const allDenied = done.every(r => r.status === "deny" || r.status === "room");
-  const pendingCount = results.length - done.length;
-  const combinedNote = done.some(r => r.head && r.head[0].includes("합산"))
+  // 사물함 함께 환불
+  if (cat !== "locker" && lockerCheck.checked) {
+    const lp = PRODUCTS.locker.find(x => x.id === lockerProd.value);
+    if (!lp) return showError("함께 환불할 사물함 이용권을 선택해 주세요.");
+    if (!lockerBuy.value) return showError("사물함 구매일자를 입력해 주세요.");
+    const extras = lockerCombine.checked ? getExtras(lockerExtraList, "locker") : [];
+    const r2 = calcPeriodLike("locker", lp, extras, lockerBuy.value, rDate);
+    if (r2.status === "error") return showError("사물함: " + r2.msg);
+    results.push(r2);
+  }
+
+  render(results);
+});
+
+function showError(msg){
+  resultBox.className = "result show deny";
+  resultBox.innerHTML = `<div class="r-title">입력 확인</div><div class="r-deny-msg">${msg}</div>`;
+}
+
+function render(results){
+  const total = results.reduce((s,r)=>s+(r.refund||0),0);
+  const allDenied = results.every(r => r.status === "deny");
+  const hasCombined = results.some(r => r.head[0].includes("합산"));
+  const note = hasCombined
     ? "기간 합산 기준 : 이용권은 순서대로 사용한 것으로 보아, 지난 이용권은 환불 불가 / 사용 중인 이용권은 해당 주차 환불율 적용 / 미사용 이용권은 전액 환불로 계산됩니다." : "";
-  const pendingNote = pendingCount > 0 ? `입력이 완료되지 않은 상품 ${pendingCount}건은 합산에서 제외되어 있습니다.` : "";
-  const note = [combinedNote, pendingNote].filter(Boolean).join("<br>");
 
   let inner = "";
-  done.forEach(r => {
+  results.forEach(r => {
     inner += `<div class="r-item-head"><span>${r.head[0]}</span><span>${r.head[1]}</span></div>`;
-    inner += `<div class="r-rows" style="margin-top:6px;border-top:none;padding-top:0;">` +
+    inner += `<div class="r-rows">` +
       r.rows.map(([k,v]) => `<div class="r-row"><span>${k}</span><span>${v}</span></div>`).join("") + `</div>`;
   });
 
   if (allDenied) {
     resultBox.className = "result show deny";
-    resultBox.innerHTML =
-      `<div class="r-title">환불 불가</div>` +
-      `<div style="font-size:17px;font-weight:700;">환불 가능한 금액이 없습니다.</div>` +
-      inner + (note ? `<div class="r-note">${note}</div>` : "");
+    resultBox.innerHTML = `<div class="r-title">환불 불가</div>
+      <div class="r-deny-msg">환불 가능한 금액이 없습니다.</div>` + inner +
+      (note ? `<div class="r-note">${note}</div>` : "");
     return;
   }
-
   resultBox.className = "result show";
   resultBox.innerHTML =
     `<span class="badge-hl">환불 가능</span>` +
-    `<div class="r-title">총 환불 예정 금액${done.length > 1 ? " (" + done.length + "개 상품 합산)" : ""}</div>` +
+    `<div class="r-title">총 환불 예정 금액${results.length > 1 ? " ("+results.length+"개 상품 합산)" : ""}</div>` +
     `<div class="r-amount">${fmt(total)}<span class="won">원</span></div>` +
     inner + (note ? `<div class="r-note">${note}</div>` : "");
+  resultBox.scrollIntoView({behavior:"smooth", block:"nearest"});
 }
-
-// 첫 상품 카드 생성
-addItem();
 </script>
 </body>
 </html>
